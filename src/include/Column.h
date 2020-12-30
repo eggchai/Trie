@@ -24,6 +24,8 @@ public:
     //final data and offset
     T* final_data;
     size_t* final_offset{};
+    // now update
+    // and update
 };
 
 
