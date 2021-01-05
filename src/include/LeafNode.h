@@ -21,8 +21,8 @@ public:
             :Node(prefix_length, start_position, end_position), sorted(false){};
     virtual ResultStruct<T>& query(ResultStruct<T>& result,T low, T high, Column<T> c);
     virtual ResultStruct<T>& query(ResultStruct<T>& result, T key, Column<T> c, bool direction);
-    ResultStruct<T>& query_without_optimize(ResultStruct<T>& result, T low, T high, Column<T> c);
-    ResultStruct<T>& query_without_optimize(ResultStruct<T>& result, T key, Column<T> c, bool direction);
+    virtual ResultStruct<T>& query_without_optimize(ResultStruct<T>& result, T low, T high, Column<T> c);
+    virtual ResultStruct<T>& query_without_optimize(ResultStruct<T>& result, T key, Column<T> c, bool direction);
     size_t binary_search(Column<T>& c,T key);
 };
 

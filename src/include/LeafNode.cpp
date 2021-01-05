@@ -5,6 +5,7 @@
 #include "LeafNode.h"
 #include <iostream>
 
+
 // query and optimized
 template<typename T>
 ResultStruct<T> &LeafNode<T>::query_without_optimize(ResultStruct<T> &result, T low, T high, Column<T> c) {

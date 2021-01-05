@@ -7,6 +7,13 @@
 
 #include <vector>
 
+typedef unsigned char uint8_t;
+typedef unsigned int uint32_t;
+typedef unsigned long size_t;
+
+size_t COLUMN_SIZE = 0;
+size_t QUERY_SIZE = 0;
+
 template<typename T>
 class RangeQuery{
 public:
@@ -18,6 +25,7 @@ template<typename T>
 class IndexEntry{
 public:
         T m_key;
+        //m_rowId is the offset of Column
         size_t m_rowId;
 };
 

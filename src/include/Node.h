@@ -5,12 +5,12 @@
 #ifndef TRIE_NODE_H
 #define TRIE_NODE_H
 
+//FIXME: header files contains each other(Node and Column).
+//In fact, Column should be replaced by array in most cases
 #include "ResultStruct.h"
 #include "Column.h"
 
-typedef unsigned char uint8_t;
-typedef unsigned int uint32_t;
-typedef unsigned long size_t;
+
 
 
 template <typename T>

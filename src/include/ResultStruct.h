@@ -5,17 +5,17 @@
 #ifndef TRIE_RESULTSTRUCT_H
 #define TRIE_RESULTSTRUCT_H
 
-#include "Node.h"
-#include "Column.h"
+#include "structs.h"
+//Now this class does not contain Node and Column
 
-template<typename T>
 class ResultStruct {
 private:
-    long long int sum;
+    size_t sum;
 public:
-    void push_back(T key);
-    void push_back_maybe(T key, bool is_satisfied);
-    void add_all_element(Column<T>& c, Node<T>* node);
+    void push_back(size_t position);
+    void push_back_maybe(size_t position, bool is_satisfied);
+    void add_all_element(size_t* offset, size_t start, size_t end);
+    size_t get_sum();
 };
 
 

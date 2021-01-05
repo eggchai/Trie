@@ -5,15 +5,17 @@
 #ifndef TRIE_COLUMN_H
 #define TRIE_COLUMN_H
 
-#include "Node.h"
-#include "Trie.h"
 #include <vector>
+#include "Node.h"
+
 
 template<typename T>
 class Column {
 public:
     std::vector<T> data;
     std::vector<size_t> offset;
+    T min;
+    T max;
     size_t size;
 
     Node<T>* index;
@@ -23,9 +25,7 @@ public:
 
     //final data and offset
     T* final_data;
-    size_t* final_offset{};
-    // now update
-        // and update
+    size_t* final_offset;
 };
 
 
