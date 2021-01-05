@@ -11,5 +11,6 @@ int main() {
     load_queries(rangeQueries, "/home/chen/CLionProjects/Trie/q1", QUERY_SIZE);
     load_column(c,"col1", COLUMN_SIZE);
     //progressive(rangeQueries, answers, c);
+    // update from my pc
     return 0;
 }
