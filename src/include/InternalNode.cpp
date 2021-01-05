@@ -21,7 +21,7 @@ InternalNode<T>::InternalNode(LeafNode<T>& leaf, uint8_t count) {//initialation
 //    return key & bitmask;
 //}
 template<typename T>
-ResultStruct<T> &InternalNode<T>::query_without_optimize(ResultStruct<T>& result,T low, T high, Column<T> c) {
+ResultStruct &InternalNode<T>::query_without_optimize(ResultStruct& result,T low, T high, Column<T> c) {
     uint32_t low_bucket = get_bucket(low);
     uint32_t high_bucket = get_bucket(high);
     std::cout<<this->prefix_length<<std::endl;
@@ -40,7 +40,7 @@ ResultStruct<T> &InternalNode<T>::query_without_optimize(ResultStruct<T>& result
     return result;
 }
 template<typename T>
-ResultStruct<T> &InternalNode<T>::query_without_optimize(ResultStruct<T>& result,T key, Column<T> c, bool direction) {
+ResultStruct &InternalNode<T>::query_without_optimize(ResultStruct& result,T key, Column<T> c, bool direction) {
     uint32_t position = get_bucket(key);
     //direction true - low, false - high
     if(direction){
@@ -58,7 +58,7 @@ ResultStruct<T> &InternalNode<T>::query_without_optimize(ResultStruct<T>& result
 }
 // query and optimize
 template<typename T>
-ResultStruct<T> &InternalNode<T>::query(ResultStruct<T> &result, T low, T high, Column<T> c) {
+ResultStruct &InternalNode<T>::query(ResultStruct &result, T low, T high, Column<T> c) {
     uint32_t low_bucket = get_bucket(low);
     uint32_t high_bucket = get_bucket(high);
     std::cout<<this->prefix_length<<std::endl;
@@ -77,7 +77,7 @@ ResultStruct<T> &InternalNode<T>::query(ResultStruct<T> &result, T low, T high, 
     return result;
 }
 template<typename T>
-ResultStruct<T> &InternalNode<T>::query(ResultStruct<T> &result, T key, Column<T> c, bool direction) {
+ResultStruct &InternalNode<T>::query(ResultStruct &result, T key, Column<T> c, bool direction) {
     uint32_t position = get_bucket(key);
     //direction true - low, false - high
     if(direction){

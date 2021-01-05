@@ -8,7 +8,8 @@
 
 // query and optimized
 template<typename T>
-ResultStruct<T> &LeafNode<T>::query_without_optimize(ResultStruct<T> &result, T low, T high, Column<T> c) {
+ResultStruct &LeafNode<T>::query_without_optimize(ResultStruct &result, T low, T high,
+                                                     std::vector<T> &data, std::vector<size_t> &offset) {
     if(sorted){
         size_t start = binary_search(c, low);
         size_t end = binary_search(c, high);
@@ -23,6 +24,14 @@ ResultStruct<T> &LeafNode<T>::query_without_optimize(ResultStruct<T> &result, T 
         }
     }
     return result;
+}
+template<typename T>
+size_t LeafNode<T>::binary_search(std::vector<T> &data, T key) {
+    //binary search
+    size_t left = 0;
+    size_t right = data.size() - 1;
+    size_t mid;
+    while(left <= right){}
 }
 
 

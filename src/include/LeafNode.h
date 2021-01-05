@@ -9,6 +9,7 @@
 #include "ResultStruct.h"
 #include "Column.h"
 #include "InternalNode.h"
+#include <vector>
 #define RADIX_BUCKET_COUNT 8
 
 template<typename T>
@@ -19,11 +20,11 @@ public:
     // In leafNode, in the process of query optimize
     LeafNode(uint32_t prefix_length, size_t start_position, size_t end_position)
             :Node(prefix_length, start_position, end_position), sorted(false){};
-    virtual ResultStruct<T>& query(ResultStruct<T>& result,T low, T high, Column<T> c);
-    virtual ResultStruct<T>& query(ResultStruct<T>& result, T key, Column<T> c, bool direction);
-    virtual ResultStruct<T>& query_without_optimize(ResultStruct<T>& result, T low, T high, Column<T> c);
-    virtual ResultStruct<T>& query_without_optimize(ResultStruct<T>& result, T key, Column<T> c, bool direction);
-    size_t binary_search(Column<T>& c,T key);
+    virtual ResultStruct& query(ResultStruct& result,T low, T high, std::vector<T> &data, std::vector<size_t> &offset);
+    virtual ResultStruct& query(ResultStruct& result, T key, std::vector<T> &data, std::vector<size_t> &offset, bool direction);
+    virtual ResultStruct& query_without_optimize(ResultStruct& result, T low, T high, std::vector<T> &data, std::vector<size_t> &offset);
+    virtual ResultStruct& query_without_optimize(ResultStruct& result, T key, std::vector<T> &data, std::vector<size_t> &offset, bool direction);
+    size_t binary_search(std::vector<T> &data, T key);
 };
 
 

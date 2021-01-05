@@ -7,7 +7,6 @@
 
 #include "Node.h"
 #include "ResultStruct.h"
-#include "Column.h"
 #include <vector>
 #include "LeafNode.h"
 
@@ -20,10 +19,10 @@ public:
     //TODO
     InternalNode(LeafNode<T>& leaf, uint8_t count);
 //    uint32_t get_bucket(T key);
-    virtual ResultStruct<T>& query(ResultStruct<T>& result,T low, T high, Column<T> c);
-    virtual ResultStruct<T>& query(ResultStruct<T>& result, T key, Column<T> c, bool direction);
-    virtual ResultStruct<T>& query_without_optimize(ResultStruct<T>& result, T low, T high, Column<T> c);
-    virtual ResultStruct<T>& query_without_optimize(ResultStruct<T>& result, T key, Column<T> c, bool direction);
+    virtual ResultStruct& query(ResultStruct& result,T low, T high, Column<T> c);
+    virtual ResultStruct& query(ResultStruct& result, T key, Column<T> c, bool direction);
+    virtual ResultStruct& query_without_optimize(ResultStruct& result, T low, T high, Column<T> c);
+    virtual ResultStruct& query_without_optimize(ResultStruct& result, T key, Column<T> c, bool direction);
     void transfer(LeafNode<T>& leaf, uint32_t count, Column<T>& c);
     void replace(InternalNode<T> *newNode, uint32_t bucket);
 };
