@@ -164,26 +164,26 @@ public:
 //};
 //
 //
-////template<typename T>
-////class InternalNode: public Node<T>{
-////private:
-////    std::vector<Node<T>*> children;
-////public:
-////    virtual size_t get_bucket(int key){
-////        //binary search
-////        size_t count = children.size();
-////    }
-////};
-//
-////template <typename T>
-////class DataNode : public Node<T>{
-////    //prefix_length is the length of key;
-////    //partical_key_length = 0 represents this node is a data node
-////    size_t position;
-////};
-//
-//
-////column
+//template<typename T>
+//class InternalNode: public Node<T>{
+//private:
+//    std::vector<Node<T>*> children;
+//public:
+//    virtual size_t get_bucket(int key){
+//        //binary search
+//        size_t count = children.size();
+//    }
+//};
+
+//template <typename T>
+//class DataNode : public Node<T>{
+//    //prefix_length is the length of key;
+//    //partical_key_length = 0 represents this node is a data node
+//    size_t position;
+//};
+
+
+//column
 //template <typename T>
 //class Column{
 //private:

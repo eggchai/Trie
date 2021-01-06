@@ -3,16 +3,17 @@
 //
 
 #include "LeafNode.h"
+#include "Column.h"
+#include "InternalNode.h"
 #include <iostream>
 
 
 // query and optimized
 template<typename T>
-ResultStruct &LeafNode<T>::query_without_optimize(ResultStruct &result, T low, T high,
-                                                     std::vector<T> &data, std::vector<size_t> &offset) {
+ResultStruct &LeafNode<T>::query_without_optimize(ResultStruct &result, T low, T high, Column<T>& c) {
     if(sorted){
-        size_t start = binary_search(c, low);
-        size_t end = binary_search(c, high);
+        size_t start = binary_search(c, low, true);
+        size_t end = binary_search(c, high, false);
         for(size_t i = start; i <= end; ++i){
             result.push_back(c.final_data[i]);
         }
@@ -25,18 +26,34 @@ ResultStruct &LeafNode<T>::query_without_optimize(ResultStruct &result, T low, T
     }
     return result;
 }
+
 template<typename T>
-size_t LeafNode<T>::binary_search(std::vector<T> &data, T key) {
+size_t LeafNode<T>::binary_search(std::vector<T> &data, T key, bool direction) {
     //binary search
-    size_t left = 0;
-    size_t right = data.size() - 1;
+    size_t left = Node<T>::start_position;
+    size_t right = Node<T>::end_position;
     size_t mid;
-    while(left <= right){}
+    size_t result = right + 1;
+    while(left <= right){
+        mid = left + (right - left)/2;
+        if(data[mid] > key){
+            if(direction)
+                result = mid;
+            right = mid - 1;
+        }else if(data[mid] < key){
+            if(!direction)
+                result = mid;
+            left = mid + 1;
+        }else{
+            return mid;
+        }
+    }
+    return result;
 }
 
 
 template<typename T>
-ResultStruct<T> &LeafNode<T>::query_without_optimize(ResultStruct<T> &result, T key, Column<T> c, bool direction) {
+ResultStruct &LeafNode<T>::query_without_optimize(ResultStruct &result, T key, Column<T>& c, bool direction) {
     if(sorted){
         size_t location = binary_search(c, key);
         // direction true-low, false-high
@@ -63,25 +80,9 @@ ResultStruct<T> &LeafNode<T>::query_without_optimize(ResultStruct<T> &result, T 
     }
     return result;
 }
+
 template<typename T>
-size_t LeafNode<T>::binary_search(Column<T> &c, T key) {
-    size_t left = Node<T>::start_position;
-    size_t right = Node<T>::end_position;
-    size_t mid;
-    while(left <= right){
-        mid = left + (right - left) / 2;
-        if(c.final_data[mid] == key){
-            return mid;
-        }else if(c.final_data[mid] > key){
-            right = mid - 1;
-        }else {
-            left = mid + 1;
-        }
-    }
-    return -1;
-}
-template<typename T>
-ResultStruct<T> &LeafNode<T>::query(ResultStruct<T> &result, T low, T high, Column<T> c) {
+ResultStruct& LeafNode<T>::query(ResultStruct &result, T low, T high, Column<T>& c) {
     if(Node<T>::size < 1024){
         sort(c.final_data, Node<T>::start_position, Node<T>::end_position);
         sorted = true;
@@ -107,12 +108,12 @@ ResultStruct<T> &LeafNode<T>::query(ResultStruct<T> &result, T low, T high, Colu
     return result;
 }
 template<typename T>
-ResultStruct<T> &LeafNode<T>::query(ResultStruct<T> &result, T key, Column<T> c, bool direction) {
+ResultStruct& LeafNode<T>::query(ResultStruct& result, T key, Column<T>& c, bool direction) {
     if(Node<T>::size < 1024){
         sort(c.final_data, Node<T>::start_position, Node<T>::end_position);
     }else{
         //this leafNode transforms to a internalNode+leafNodes, and call query_without_optimize
-        //TODO
         new InternalNode<T>(this, 8);
     }
+    return result;
 }

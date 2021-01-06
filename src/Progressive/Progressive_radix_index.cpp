@@ -14,8 +14,8 @@
 //Column C, query workload...
 
 template <typename T>
-ResultStruct<T> progressive_radix_sort(Column<T>& c, T low, T high){
-    ResultStruct<T> result;
+ResultStruct progressive_radix_sort(Column<T>& c, T low, T high){
+    ResultStruct result;
 
     if(c.indexed){
         // binary search and cracker index

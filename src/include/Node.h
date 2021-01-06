@@ -9,6 +9,9 @@
 //In fact, Column should be replaced by array in most cases
 #include "ResultStruct.h"
 
+template<typename T>
+class Column;
+
 template <typename T>
 class Node {
 public:
@@ -17,17 +20,12 @@ public:
     size_t end_position = 0;
     Node<T> *parent;
 
-    Node(uint32_t prefix_length, size_t start_position, size_t end_position)
-            :prefix_length(prefix_length),start_position(start_position), end_position(end_position){}
-    virtual ResultStruct& query(ResultStruct& result,T low, T high, Column<T> c) = 0;
-    virtual ResultStruct& query(ResultStruct& result, T key, Column<T> c, bool direction) = 0;
-    virtual ResultStruct& query_without_optimize(ResultStruct& result, T low, T high, Column<T> c) = 0;
-    virtual ResultStruct& query_without_optimize(ResultStruct& result, T key, Column<T> c, bool direction) = 0;
-    uint32_t get_bucket(T key) {
-        //generate bitmask
-        T bitmask = ((1 << partical_key_length) - 1) << (sizeof(key) * 8 - partical_key_length - prefix_length);
-        return key & bitmask;
-    }
+    Node(uint32_t prefix_length, size_t start_position, size_t end_position, Node<T> *parent);
+    virtual ResultStruct& query(ResultStruct& result,T low, T high, Column<T>& c) = 0;
+    virtual ResultStruct& query(ResultStruct& result, T key, Column<T>& c, bool direction) = 0;
+    virtual ResultStruct& query_without_optimize(ResultStruct& result, T low, T high, Column<T>& c) = 0;
+    virtual ResultStruct& query_without_optimize(ResultStruct& result, T key, Column<T>& c, bool direction) = 0;
+    uint32_t get_bucket(T key,uint8_t partical_length);
 };
 
 

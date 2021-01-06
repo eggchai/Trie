@@ -3,14 +3,16 @@
 //
 
 #include "InternalNode.h"
+#include "LeafNode.h"
+#include "Column.h"
 #include <algorithm>
 #include <iostream>
 
 template<typename T>
-InternalNode<T>::InternalNode(LeafNode<T>& leaf, uint8_t count) {//initialation
-    Node(leaf.prefix_length, leaf.start_position, leaf.end_position);
+InternalNode<T>::InternalNode(LeafNode<T>& leaf, Column<T>& c,uint8_t count) {//initialation
+    Node<T>(leaf.prefix_length, leaf.start_position, leaf.end_position, leaf.parent);
     //now it's time to optimization
-    transfer(leaf, count);
+    transfer(c,count);
 }
 
 //template<typename T>
@@ -21,49 +23,49 @@ InternalNode<T>::InternalNode(LeafNode<T>& leaf, uint8_t count) {//initialation
 //    return key & bitmask;
 //}
 template<typename T>
-ResultStruct &InternalNode<T>::query_without_optimize(ResultStruct& result,T low, T high, Column<T> c) {
+ResultStruct &InternalNode<T>::query_without_optimize(ResultStruct& result,T low, T high, T* data, size_t* offset) {
     uint32_t low_bucket = get_bucket(low);
     uint32_t high_bucket = get_bucket(high);
     std::cout<<this->prefix_length<<std::endl;
     if(low_bucket == high_bucket){
-        children[low_bucket]->query_without_optimize(result, low, high, c);
+        children[low_bucket]->query_without_optimize(result, low, high, data, offset);
     }else{
         //nodes between
         for(uint32_t i = low_bucket + 1; i < high_bucket; ++i){
-            result.add_all_element(children[i]);
+            result.add_all_element(offset, children[i]->start_position, children[i]->end_position);
         }
         //the buckets low and high located
-       children[low_bucket].query_without_optimize(result, low, c, true);
-       children[high_bucket].query_without_optimize(result, high, c, false);
+       children[low_bucket].query_without_optimize(result, low, data, offset, true);
+       children[high_bucket].query_without_optimize(result, high, data, offset, false);
     }
 
     return result;
 }
 template<typename T>
-ResultStruct &InternalNode<T>::query_without_optimize(ResultStruct& result,T key, Column<T> c, bool direction) {
+ResultStruct &InternalNode<T>::query_without_optimize(ResultStruct& result,T key, T* data, size_t* offset, bool direction) {
     uint32_t position = get_bucket(key);
     //direction true - low, false - high
     if(direction){
         for(uint32_t i = position + 1; i < children.size(); ++i){
             result.add_all_element(children[i]);
         }
-        query(result, key, c, direction);
+        query(result, key, data, result, direction);
     } else {
         for(uint32_t i = 0; i < position - 1; ++i){
             result.add_all_element(children[i]);
         }
-        children[position].query_without_optimize(result, key, c, direction);
+        children[position].query_without_optimize(result, key, data, offset, direction);
     }
     return result;
 }
 // query and optimize
 template<typename T>
-ResultStruct &InternalNode<T>::query(ResultStruct &result, T low, T high, Column<T> c) {
+ResultStruct &InternalNode<T>::query(ResultStruct &result, T low, T high, T* data, size_t* offset) {
     uint32_t low_bucket = get_bucket(low);
     uint32_t high_bucket = get_bucket(high);
     std::cout<<this->prefix_length<<std::endl;
     if(low_bucket == high_bucket){
-        children[low_bucket]->query(result, low, high, c);
+        children[low_bucket]->query(result, low, high, data, result);
         std::sort(children.begin(),children.end());
     }else{
         //nodes between
@@ -71,40 +73,41 @@ ResultStruct &InternalNode<T>::query(ResultStruct &result, T low, T high, Column
             result.add_all_element(children[i]);
         }
         //the buckets low and high located
-        children[low_bucket].query(result, low, c, true);
-        children[high_bucket].query(result, high, c, false);
+        children[low_bucket].query(result, low, data, offset, true);
+        children[high_bucket].query(result, high, data, offset, false);
     }
     return result;
 }
 template<typename T>
-ResultStruct &InternalNode<T>::query(ResultStruct &result, T key, Column<T> c, bool direction) {
+ResultStruct &InternalNode<T>::query(ResultStruct &result, T key, T* data, size_t* offset, bool direction) {
     uint32_t position = get_bucket(key);
     //direction true - low, false - high
     if(direction){
         for(uint32_t i = position + 1; i < children.size(); ++i){
             result.add_all_element(children[i]);
         }
-        query(result, key, c, direction);
+        query(result, key, data, offset, direction);
     } else {
         for(uint32_t i = 0; i < position - 1; ++i){
             result.add_all_element(children[i]);
         }
-        children[position].query(result, key, c, direction);
+        children[position].query(result, key, data, offset, direction);
     }
     return result;
 }
 template<typename T>
-void InternalNode<T>::transfer(LeafNode<T> &leaf, uint32_t count, Column<T>& c) {
+void InternalNode<T>::transfer(Column<T>& c, uint8_t count) {
     //now transform a leafNode to a internalNode
-    uint32_t prefix = leaf.prefix_length;
+    //why cannot use prefix_length which is a public member of parent class
+    uint32_t prefix = Node<T>::prefix_length;
     uint8_t partical_key_length = count;
     T bitmask = ((1 << partical_key_length) - 1) << (sizeof(T) * 8 - partical_key_length);
     std::vector<size_t> bucket_count;
     uint32_t partition_count = partical_key_length * partical_key_length;
     bucket_count.resize(partition_count, 0);
     //count every bucket
-    for(auto elem : c.getdata()){
-        ++bucket_count[elem & bitmask];
+    for(size_t i=0; i < COLUMN_SIZE; ++i){
+        ++bucket_count[c.final_data[i] & bitmask];
     }
     for(size_t i=1; i < partition_count; ++i){
         bucket_count[i]  += bucket_count[i-1];
@@ -122,10 +125,10 @@ void InternalNode<T>::transfer(LeafNode<T> &leaf, uint32_t count, Column<T>& c) 
                                             this->start_position + bucket_count[partical_key_length - 1],
                                             this->end_position);
     children.push_back(leafNode);
-    Node<T> *parent = leaf.parent;
+    Node<T> *parent = Node<T>::parent;
     //leaf is not root node, need to get the bucket of this leaf belong to
     if(!parent){
-        T key = c.final_data[leaf.start_position];
+        T key = data[start_position];
         uint32_t parent_bucket = parent->get_bucket(key);
         parent->replace(this, parent_bucket);
     }
