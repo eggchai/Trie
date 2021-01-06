@@ -12,7 +12,7 @@ template<typename T>
 InternalNode<T>::InternalNode(LeafNode<T>& leaf, Column<T>& c,uint8_t count) {//initialation
     Node<T>(leaf.prefix_length, leaf.start_position, leaf.end_position, leaf.parent);
     //now it's time to optimization
-    transfer(c,count);
+    transfer(c,count,leaf.location);
 }
 
 //template<typename T>
@@ -96,7 +96,7 @@ ResultStruct &InternalNode<T>::query(ResultStruct &result, T key, T* data, size_
     return result;
 }
 template<typename T>
-void InternalNode<T>::transfer(Column<T>& c, uint8_t count) {
+void InternalNode<T>::transfer(Column<T>& c, uint8_t count, uint32_t location) {
     //now transform a leafNode to a internalNode
     //why cannot use prefix_length which is a public member of parent class
     uint32_t prefix = Node<T>::prefix_length;
@@ -128,13 +128,7 @@ void InternalNode<T>::transfer(Column<T>& c, uint8_t count) {
     Node<T> *parent = Node<T>::parent;
     //leaf is not root node, need to get the bucket of this leaf belong to
     if(!parent){
-        T key = data[start_position];
-        uint32_t parent_bucket = parent->get_bucket(key);
-        parent->replace(this, parent_bucket);
+        parent->children[location] = this;
     }
 }
 
-template<typename T>
-void InternalNode<T>::replace(InternalNode<T> *newNode, uint32_t bucket) {
-    children[bucket] = newNode;
-}

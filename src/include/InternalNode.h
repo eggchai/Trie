@@ -26,7 +26,7 @@ public:
     virtual ResultStruct& query(ResultStruct& result, T key, T* data, size_t* offset, bool direction);
     virtual ResultStruct& query_without_optimize(ResultStruct& result, T low, T high, T* data, size_t* offset);
     virtual ResultStruct& query_without_optimize(ResultStruct& result, T key, T* data, size_t* offset, bool direction);
-    void transfer(T* data, size_t* offset, uint8_t count);
+    void transfer(Column<T>& c, uint8_t count, uint32_t location);
 //    void replace(InternalNode<T> *newNode, uint32_t bucket);
 };
 

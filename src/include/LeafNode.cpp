@@ -103,7 +103,8 @@ ResultStruct& LeafNode<T>::query(ResultStruct &result, T low, T high, Column<T>&
         //now construct node
         //InternalNode* internal = new InternalNode();
         //TODO: bucket count relates to the number of this node and the query result
-        new InternalNode<T>(this, 8);//in this initialization, will optimize and modify pointer of parent
+        new InternalNode<T>(this, 8);
+        //after optimizing, query_without_optimize. but how to release this leaf?
     }
     return result;
 }
@@ -113,6 +114,7 @@ ResultStruct& LeafNode<T>::query(ResultStruct& result, T key, Column<T>& c, bool
         sort(c.final_data, Node<T>::start_position, Node<T>::end_position);
     }else{
         //this leafNode transforms to a internalNode+leafNodes, and call query_without_optimize
+        //TODO: optimize here
         new InternalNode<T>(this, 8);
     }
     return result;

@@ -15,10 +15,11 @@ class LeafNode : public Node<T>{
 private:
     bool sorted;
     bool modeled;
+    uint32_t location;
 public:
     // In leafNode, in the process of query optimize
-    LeafNode(uint32_t prefix_length, size_t start_position, size_t end_position)
-            :Node<T>(prefix_length, start_position, end_position), sorted(false){};
+    LeafNode(uint32_t prefix_length, size_t start_position, size_t end_position, uint32_t location)
+            :Node<T>(prefix_length, start_position, end_position), sorted(false), location(location){};
     virtual ResultStruct& query(ResultStruct& result,T low, T high, Column<T>& c);
     virtual ResultStruct& query(ResultStruct& result, T key, Column<T>& c, bool direction);
     virtual ResultStruct& query_without_optimize(ResultStruct& result, T low, T high, Column<T>& c);
