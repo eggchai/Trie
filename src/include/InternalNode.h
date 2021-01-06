@@ -7,6 +7,7 @@
 
 #include "Node.h"
 #include "ResultStruct.h"
+#include "Global_parameters.h"
 #include <vector>
 
 template<typename T>

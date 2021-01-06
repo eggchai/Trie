@@ -4,7 +4,7 @@
 
 #ifndef TRIE_COLUMN_H
 #define TRIE_COLUMN_H
-
+#include "Global_parameters.h"
 #include <vector>
 #include "Node.h"
 

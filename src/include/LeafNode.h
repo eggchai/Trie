@@ -5,6 +5,7 @@
 #ifndef TRIE_LEAFNODE_H
 #define TRIE_LEAFNODE_H
 
+#include "Global_parameters.h"
 #include "Node.h"
 #include "ResultStruct.h"
 #include <vector>
